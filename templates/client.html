@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Client – AW Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <h1><a href="/" style="color:white;text-decoration:none;">AW Client Report Portal</a></h1>
+                <span>Windbrook Solutions</span>
+            </div>
+        </div>
+    </header>
+
+    <main style="max-width: 860px; margin: 40px auto; padding: 0 20px;">
+        <h2 style="color:#1F4E79; margin-bottom:24px;">Add New Client</h2>
+
+        <form method="POST" action="/client/new">
+
+            <!-- CLIENT INFO -->
+            <div class="form-section">
+                <h3>Client 1 — Primary</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" name="name" required placeholder="e.g. John Smith">
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input type="date" name="dob" id="dob"
+                               onchange="calcAge('dob','age')">
+                    </div>
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" name="age" id="age"
+                               placeholder="Auto-calculated" readonly
+                               style="background:#F5F5F5; color:#666;">
+                    </div>
+                    <div class="form-group">
+                        <label>SSN Last 4</label>
+                        <input type="text" name="ssn_last4" maxlength="4" placeholder="1234">
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARTNER TOGGLE -->
+            <div class="form-section">
+                <div class="toggle-row">
+                    <div>
+                        <h3 style="margin:0;">Partner Information</h3>
+                        <p style="color:#999; font-size:13px; margin:4px 0 0;">
+                            Enable if this client has a partner, spouse, or co-client.
+                        </p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="has_partner_toggle" name="has_partner" value="1"
+                               onchange="togglePartner(this)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div id="partner-fields" style="display:none; margin-top:20px;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Partner Full Name</label>
+                            <input type="text" name="name_partner" placeholder="e.g. Jane Smith">
+                        </div>
+                        <div class="form-group">
+                            <label>Partner Date of Birth</label>
+                            <input type="date" name="dob_partner" id="dob_partner"
+                                   onchange="calcAge('dob_partner','age_partner')">
+                        </div>
+                        <div class="form-group">
+                            <label>Partner Age</label>
+                            <input type="number" name="age_partner" id="age_partner"
+                                   placeholder="Auto-calculated" readonly
+                                   style="background:#F5F5F5; color:#666;">
+                        </div>
+                        <div class="form-group">
+                            <label>Partner SSN Last 4</label>
+                            <input type="text" name="ssn_last4_partner" maxlength="4" placeholder="5678">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FINANCIAL INFO -->
+            <div class="form-section">
+                <h3>Financial Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Monthly Inflow (After Tax) *</label>
+                        <input type="number" name="monthly_salary" step="0.01"
+                               required placeholder="15000">
+                    </div>
+                    <div class="form-group">
+                        <label>Monthly Expense Budget *</label>
+                        <input type="number" name="monthly_expenses" step="0.01"
+                               required placeholder="11000">
+                    </div>
+                    <div class="form-group">
+                        <label>Private Reserve Target</label>
+                        <input type="number" name="private_reserve_target"
+                               step="0.01" placeholder="66000">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACCOUNTS -->
+            <div class="form-section">
+                <h3>Accounts</h3>
+                <p style="color:#666; font-size:13px; margin-bottom:16px;">
+                    Add all accounts for this client. Retirement accounts are assigned
+                    per individual. Non-retirement, trust, and liabilities can be joint.
+                </p>
+
+                <div id="accounts-container">
+                    <div class="account-row">
+                        <select name="account_category[]" required onchange="updateOwnerOptions(this)">
+                            <option value="">Category</option>
+                            <option value="retirement">Retirement</option>
+                            <option value="non_retirement">Non-Retirement</option>
+                            <option value="trust">Trust</option>
+                            <option value="liability">Liability</option>
+                        </select>
+                        <select name="account_owner[]" required>
+                            <option value="client1">Client 1</option>
+                            <option value="client2">Client 2</option>
+                            <option value="joint">Joint</option>
+                        </select>
+                        <input type="text" name="account_type[]"
+                               placeholder="IRA, Roth IRA, Mortgage..." required>
+                        <input type="text" name="account_last4[]"
+                               placeholder="Last 4" maxlength="4">
+                        <button type="button" class="btn-remove"
+                                onclick="removeAccount(this)">✕</button>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-secondary"
+                        onclick="addAccount()" style="margin-top:12px;">
+                    + Add Account
+                </button>
+            </div>
+
+            <div style="margin-top:32px; display:flex; gap:16px;">
+                <button type="submit" class="btn btn-primary">Save Client</button>
+                <a href="/" class="btn btn-secondary">Cancel</a>
+            </div>
+
+        </form>
+    </main>
+
+    <script>
+        function togglePartner(checkbox) {
+            const fields = document.getElementById('partner-fields');
+            fields.style.display = checkbox.checked ? 'block' : 'none';
+
+            // Update owner dropdowns
+            updateAllOwnerDropdowns();
+        }
+
+        function updateAllOwnerDropdowns() {
+            const selects = document.querySelectorAll('select[name="account_owner[]"]');
+            selects.forEach(sel => refreshOwnerOptions(sel));
+        }
+
+        function refreshOwnerOptions(sel) {
+            const hasPartner = document.getElementById('has_partner_toggle').checked;
+            const current = sel.value;
+            sel.innerHTML = '';
+
+            const opt1 = new Option('Client 1', 'client1');
+            sel.add(opt1);
+
+            if (hasPartner) {
+                const opt2 = new Option('Client 2 (Partner)', 'client2');
+                sel.add(opt2);
+                const optJ = new Option('Joint', 'joint');
+                sel.add(optJ);
+            }
+
+            if (current) sel.value = current;
+        }
+
+        function addAccount() {
+            const container = document.getElementById('accounts-container');
+            const hasPartner = document.getElementById('has_partner_toggle').checked;
+            const row = document.createElement('div');
+            row.className = 'account-row';
+
+            let ownerOptions = `<option value="client1">Client 1</option>`;
+            if (hasPartner) {
+                ownerOptions += `
+                    <option value="client2">Client 2 (Partner)</option>
+                    <option value="joint">Joint</option>`;
+            }
+
+            row.innerHTML = `
+                <select name="account_category[]" required
+                        onchange="updateOwnerOptions(this)">
+                    <option value="">Category</option>
+                    <option value="retirement">Retirement</option>
+                    <option value="non_retirement">Non-Retirement</option>
+                    <option value="trust">Trust</option>
+                    <option value="liability">Liability</option>
+                </select>
+                <select name="account_owner[]" required>
+                    ${ownerOptions}
+                </select>
+                <input type="text" name="account_type[]"
+                       placeholder="IRA, Roth IRA, Mortgage..." required>
+                <input type="text" name="account_last4[]"
+                       placeholder="Last 4" maxlength="4">
+                <button type="button" class="btn-remove"
+                        onclick="removeAccount(this)">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function removeAccount(btn) {
+            const rows = document.querySelectorAll('.account-row');
+            if (rows.length > 1) btn.parentElement.remove();
+        }
+
+        function updateOwnerOptions(categorySelect) {
+            const ownerSelect = categorySelect.parentElement
+                                              .querySelector('select[name="account_owner[]"]');
+            refreshOwnerOptions(ownerSelect);
+        }
+        
+        function calcAge(dobId, ageId) {
+            const dob = new Date(document.getElementById(dobId).value);
+            if (isNaN(dob)) return;
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+            document.getElementById(ageId).value = age;
+}
+    </script>
+</body>
+</html>

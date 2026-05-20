@@ -1,0 +1,487 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #F5F7FA;
+    color: #333;
+}
+
+/* ── HEADER ─────────────────────────────────────────────── */
+header {
+    background: #1F4E79;
+    padding: 16px 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo h1 {
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.logo span {
+    color: #90CAF9;
+    font-size: 12px;
+}
+
+/* ── LAYOUT ──────────────────────────────────────────────── */
+.layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 70px);
+}
+
+/* ── SIDEBAR ─────────────────────────────────────────────── */
+.sidebar {
+    width: 260px;
+    background: white;
+    border-right: 1px solid #E0E0E0;
+    padding: 24px 0;
+    flex-shrink: 0;
+}
+
+.sidebar h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #999;
+    padding: 0 20px 16px;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+.client-list {
+    list-style: none;
+    margin-top: 8px;
+}
+
+.client-list li a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    transition: background 0.15s;
+}
+
+.client-list li a:hover {
+    background: #F0F7FF;
+    color: #1F4E79;
+}
+
+.client-list li.active a {
+    background: #E3F2FD;
+    color: #1F4E79;
+    font-weight: 600;
+    border-left: 3px solid #1F4E79;
+}
+
+.client-arrow {
+    color: #999;
+    font-size: 12px;
+}
+
+.empty-state {
+    padding: 20px;
+    color: #999;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* ── CONTENT ─────────────────────────────────────────────── */
+.content {
+    flex: 1;
+    padding: 32px 40px;
+}
+
+.client-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #E0E0E0;
+}
+
+.client-header h2 {
+    font-size: 26px;
+    color: #1F4E79;
+}
+
+.spouse {
+    color: #666;
+    font-size: 15px;
+    margin-top: 4px;
+}
+
+.client-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* ── INFO CARDS ──────────────────────────────────────────── */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.info-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    border-top: 3px solid #1F4E79;
+}
+
+.info-card label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #999;
+    margin-bottom: 8px;
+}
+
+.info-card value {
+    display: block;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1F4E79;
+}
+
+.info-card value.green {
+    color: #2E7D32;
+}
+
+/* ── SECTION ─────────────────────────────────────────────── */
+.section {
+    background: white;
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.section h3 {
+    font-size: 15px;
+    color: #1F4E79;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+/* ── TABLES ──────────────────────────────────────────────── */
+.accounts-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.accounts-table th {
+    text-align: left;
+    padding: 10px 12px;
+    background: #F5F7FA;
+    color: #666;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.accounts-table td {
+    padding: 12px;
+    border-bottom: 1px solid #F0F0F0;
+    color: #333;
+}
+
+.accounts-table tr:last-child td {
+    border-bottom: none;
+}
+
+.accounts-table td.green {
+    color: #2E7D32;
+    font-weight: 600;
+}
+
+/* ── BADGES ──────────────────────────────────────────────── */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-retirement { background: #E3F2FD; color: #1F4E79; }
+.badge-non_retirement { background: #E8F5E9; color: #2E7D32; }
+.badge-trust { background: #FFF3E0; color: #E65100; }
+.badge-liability { background: #FFEBEE; color: #C62828; }
+
+/* ── BUTTONS ─────────────────────────────────────────────── */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+}
+
+.btn-primary {
+    background: #1F4E79;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2E75B6;
+}
+
+.btn-secondary {
+    background: white;
+    color: #1F4E79;
+    border: 1.5px solid #1F4E79;
+}
+
+.btn-secondary:hover {
+    background: #F0F7FF;
+}
+
+.btn-small {
+    padding: 6px 14px;
+    font-size: 12px;
+    background: #1F4E79;
+    color: white;
+    border-radius: 5px;
+}
+
+.btn-small:hover {
+    background: #2E75B6;
+}
+
+.btn-remove {
+    background: #FFEBEE;
+    color: #C62828;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-remove:hover {
+    background: #C62828;
+    color: white;
+}
+
+/* ── WELCOME ─────────────────────────────────────────────── */
+.welcome {
+    text-align: center;
+    padding: 80px 40px;
+}
+
+.welcome h2 {
+    font-size: 28px;
+    color: #1F4E79;
+    margin-bottom: 16px;
+}
+
+.welcome p {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.welcome .btn {
+    margin-top: 24px;
+    padding: 14px 32px;
+    font-size: 16px;
+}
+
+/* ── FORMS ───────────────────────────────────────────────── */
+.form-section {
+    background: white;
+    border-radius: 10px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.form-section h3 {
+    font-size: 16px;
+    color: #1F4E79;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+}
+
+.form-group input,
+.form-group select {
+    padding: 10px 14px;
+    border: 1.5px solid #E0E0E0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333;
+    transition: border 0.15s;
+    background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #1F4E79;
+}
+
+.form-group small {
+    font-size: 11px;
+    color: #999;
+}
+
+/* ── ACCOUNT ROWS ────────────────────────────────────────── */
+.account-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.account-row select,
+.account-row input {
+    padding: 9px 12px;
+    border: 1.5px solid #E0E0E0;
+    border-radius: 6px;
+    font-size: 13px;
+    flex: 1;
+    min-width: 120px;
+}
+
+.account-row select:focus,
+.account-row input:focus {
+    outline: none;
+    border-color: #1F4E79;
+}
+
+/* ── BALANCE ROWS ────────────────────────────────────────── */
+.balance-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #F0F0F0;
+    gap: 20px;
+}
+
+.balance-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+/* ── CALC PREVIEW ────────────────────────────────────────── */
+.calc-preview {
+    background: #F0F7FF;
+    border: 1.5px solid #2E75B6;
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    color: #1F4E79;
+}
+
+.calc-preview strong {
+    font-size: 22px;
+    color: #2E7D32;
+}
+
+/* ── PARTNER TOGGLE ──────────────────────────────────────── */
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #ccc;
+    border-radius: 28px;
+    transition: 0.3s;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: #1F4E79;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}

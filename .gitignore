@@ -1,0 +1,4 @@
+aw_portal.db 
+__pycache__/ 
+*.pyc 
+.env 

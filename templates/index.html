@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AW Client Report Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <h1>AW Client Report Portal</h1>
+                <span>Windbrook Solutions</span>
+            </div>
+            <a href="/client/new" class="btn btn-primary">+ Add Client</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+            <!-- Client List -->
+            <aside class="sidebar">
+                <h2>Clients</h2>
+                {% if clients %}
+                    <ul class="client-list">
+                        {% for client in clients %}
+                        <li class="{% if selected_client and selected_client.id == client.id %}active{% endif %}">
+                            <a href="/client/{{ client.id }}">
+                                <span class="client-name">{{ client.name }}</span>
+                                <span class="client-arrow">→</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="empty-state">No clients yet.<br>Add your first client to get started.</p>
+                {% endif %}
+            </aside>
+
+            <!-- Main Content -->
+            <section class="content">
+                {% if selected_client %}
+                    <div class="client-header">
+                        <div>
+                            <h2>{{ selected_client.name }}</h2>
+                            {% if selected_client.name_spouse %}
+                                <p class="spouse">& {{ selected_client.name_spouse }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="client-actions">
+                            <a href="/client/{{ selected_client.id }}/report" class="btn btn-primary">Generate Report</a>
+                            <a href="/client/new" class="btn btn-secondary">Edit Client</a>
+                        </div>
+                    </div>
+
+                    <!-- Client Info Cards -->
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <label>Monthly Inflow</label>
+                            <value>${{ "{:,.0f}".format(selected_client.monthly_salary) }}</value>
+                        </div>
+                        <div class="info-card">
+                            <label>Monthly Outflow</label>
+                            <value>${{ "{:,.0f}".format(selected_client.monthly_expenses) }}</value>
+                        </div>
+                        <div class="info-card">
+                            <label>Private Reserve Target</label>
+                            <value>${{ "{:,.0f}".format(selected_client.private_reserve_target) }}</value>
+                        </div>
+                        <div class="info-card">
+                            <label>Monthly Excess</label>
+                            <value class="green">${{ "{:,.0f}".format(selected_client.monthly_salary - selected_client.monthly_expenses) }}</value>
+                        </div>
+                    </div>
+
+                    <!-- Accounts -->
+                    {% if accounts %}
+                    <div class="section">
+                        <h3>Accounts</h3>
+                        <table class="accounts-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Owner</th>
+                                    <th>Last 4</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for account in accounts %}
+                                <tr>
+                                    <td>{{ account.account_type }}</td>
+                                    <td><span class="badge badge-{{ account.account_category }}">{{ account.account_category }}</span></td>
+                                    <td>{{ account.owner }}</td>
+                                    <td>****{{ account.last4 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                    <!-- Report History -->
+                    {% if reports %}
+                    <div class="section">
+                        <h3>Report History</h3>
+                        <table class="accounts-table">
+                            <thead>
+                                <tr>
+                                    <th>Quarter</th>
+                                    <th>Year</th>
+                                    <th>Inflow</th>
+                                    <th>Outflow</th>
+                                    <th>Excess</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in reports %}
+                                <tr>
+                                    <td>{{ report.quarter }}</td>
+                                    <td>{{ report.year }}</td>
+                                    <td>${{ "{:,.0f}".format(report.inflow) }}</td>
+                                    <td>${{ "{:,.0f}".format(report.outflow) }}</td>
+                                    <td class="green">${{ "{:,.0f}".format(report.excess) }}</td>
+                                    <td>
+                                        <a href="/client/{{ selected_client.id }}/download/{{ report.id }}" 
+                                           class="btn btn-small">Download</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                {% else %}
+                    <div class="welcome">
+                        <h2>Welcome to AW Client Report Portal</h2>
+                        <p>Select a client from the sidebar or add a new one to get started.</p>
+                        <p>Generate polished SACS and TCC PDF reports in minutes instead of a full day.</p>
+                        <a href="/client/new" class="btn btn-primary">+ Add Your First Client</a>
+                    </div>
+                {% endif %}
+            </section>
+        </div>
+    </main>
+</body>
+</html>
