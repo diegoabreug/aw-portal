@@ -102,6 +102,71 @@ def client_detail(client_id):
                            accounts=accounts,
                            reports=reports)
 
+# ── EDIT CLIENT ─────────────────────────────────────────────
+@app.route('/client/<int:client_id>/edit', methods=['GET', 'POST'])
+def edit_client(client_id):
+    client = get_client(client_id)
+    accounts = get_client_accounts(client_id)
+
+    if request.method == 'POST':
+        has_partner = 1 if request.form.get('has_partner') else 0
+
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # Actualizar datos del cliente
+        cursor.execute('''
+            UPDATE clients SET 
+                name = ?, has_partner = ?, name_partner = ?,
+                dob = ?, dob_partner = ?,
+                age = ?, age_partner = ?,
+                ssn_last4 = ?, ssn_last4_partner = ?,
+                monthly_salary = ?, monthly_expenses = ?, private_reserve_target = ?
+            WHERE id = ?
+        ''', (
+            request.form['name'],
+            has_partner,
+            request.form.get('name_partner') or None,
+            request.form.get('dob') or None,
+            request.form.get('dob_partner') or None,
+            request.form.get('age') or None,
+            request.form.get('age_partner') or None,
+            request.form.get('ssn_last4') or None,
+            request.form.get('ssn_last4_partner') or None,
+            float(request.form.get('monthly_salary') or 0),
+            float(request.form.get('monthly_expenses') or 0),
+            float(request.form.get('private_reserve_target') or 0),
+            client_id
+        ))
+
+        # Reemplazar cuentas antiguas con las nuevas
+        cursor.execute('DELETE FROM accounts WHERE client_id = ?', (client_id,))
+
+        account_types      = request.form.getlist('account_type[]')
+        account_categories = request.form.getlist('account_category[]')
+        account_owners     = request.form.getlist('account_owner[]')
+        account_last4s     = request.form.getlist('account_last4[]')
+
+        for i in range(len(account_types)):
+            if account_types[i]:
+                cursor.execute('''
+                    INSERT INTO accounts
+                        (client_id, owner, account_type, account_category, last4)
+                    VALUES (?, ?, ?, ?, ?)
+                ''', (
+                    client_id,
+                    account_owners[i],
+                    account_types[i],
+                    account_categories[i],
+                    account_last4s[i] if i < len(account_last4s) else ''
+                ))
+
+        conn.commit()
+        conn.close()
+        return redirect(url_for('client_detail', client_id=client_id))
+
+    return render_template('client.html', client=client, accounts=accounts)
+
 # ── GENERATE REPORT ─────────────────────────────────────────
 @app.route('/client/<int:client_id>/report', methods=['GET', 'POST'])
 def generate_report(client_id):
@@ -169,10 +234,16 @@ def download_reports(client_id, report_id):
     client = get_client(client_id)
 
     client_dict = dict(client)
+    
+    # Usamos un nombre genérico, ya que puede ser cualquier banco
+    client_dict['investment_balance'] = tcc_data['non_retirement']
 
     sacs_buffer = generate_sacs_pdf(client_dict, sacs_data,
                                     report['private_reserve_balance'])
+    
+    # ¡AQUÍ ESTÁ LA LÍNEA QUE FALTABA!
     tcc_buffer  = generate_tcc_pdf(client_dict, tcc_data)
+
 
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, 'w') as zf:

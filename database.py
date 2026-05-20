@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-DATABASE = 'aw_portal.db'
+DATABASE = os.environ.get('DB_PATH', 'aw_portal.db')
 
 def get_db():
     conn = sqlite3.connect(DATABASE)

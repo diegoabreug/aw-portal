@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Client – AW Portal</title>
+    <title>{% if client %}Edit{% else %}Add{% endif %} Client – AW Portal</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -17,37 +17,33 @@
     </header>
 
     <main style="max-width: 860px; margin: 40px auto; padding: 0 20px;">
-        <h2 style="color:#1F4E79; margin-bottom:24px;">Add New Client</h2>
+        <h2 style="color:#1F4E79; margin-bottom:24px;">{% if client %}Edit Client: {{ client.name }}{% else %}Add New Client{% endif %}</h2>
 
-        <form method="POST" action="/client/new">
+        <form method="POST" action="{% if client %}/client/{{ client.id }}/edit{% else %}/client/new{% endif %}">
 
-            <!-- CLIENT INFO -->
             <div class="form-section">
                 <h3>Client 1 — Primary</h3>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Full Name *</label>
-                        <input type="text" name="name" required placeholder="e.g. John Smith">
+                        <input type="text" name="name" required placeholder="e.g. John Smith" value="{{ client.name if client else '' }}">
                     </div>
                     <div class="form-group">
                         <label>Date of Birth</label>
-                        <input type="date" name="dob" id="dob"
-                               onchange="calcAge('dob','age')">
+                        <input type="date" name="dob" id="dob" onchange="calcAge('dob','age')" value="{{ client.dob if client and client.dob else '' }}">
                     </div>
                     <div class="form-group">
                         <label>Age</label>
-                        <input type="number" name="age" id="age"
-                               placeholder="Auto-calculated" readonly
-                               style="background:#F5F5F5; color:#666;">
+                        <input type="number" name="age" id="age" placeholder="Auto-calculated" readonly style="background:#F5F5F5; color:#666;" value="{{ client.age if client and client.age else '' }}">
                     </div>
                     <div class="form-group">
                         <label>SSN Last 4</label>
-                        <input type="text" name="ssn_last4" maxlength="4" placeholder="1234">
+                        <input type="text" name="ssn_last4" maxlength="4" placeholder="1234" value="{{ client.ssn_last4 if client and client.ssn_last4 else '' }}">
                     </div>
                 </div>
             </div>
 
-            <!-- PARTNER TOGGLE -->
+
             <div class="form-section">
                 <div class="toggle-row">
                     <div>
@@ -57,60 +53,51 @@
                         </p>
                     </div>
                     <label class="toggle-switch">
-                        <input type="checkbox" id="has_partner_toggle" name="has_partner" value="1"
-                               onchange="togglePartner(this)">
+                        <input type="checkbox" id="has_partner_toggle" name="has_partner" value="1" onchange="togglePartner(this)" {% if client and client.has_partner %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
 
-                <div id="partner-fields" style="display:none; margin-top:20px;">
-                    <div class="form-grid">
-                        <div class="form-group">
+                        <div id="partner-fields" {% if client and client.has_partner %}style="display:block; margin-top:20px;"{% else %}style="display:none; margin-top:20px;"{% endif %}>                        <div class="form-group">
                             <label>Partner Full Name</label>
-                            <input type="text" name="name_partner" placeholder="e.g. Jane Smith">
+                            <input type="text" name="name_partner" placeholder="e.g. Jane Smith" value="{{ client.name_partner if client and client.name_partner else '' }}">
                         </div>
                         <div class="form-group">
                             <label>Partner Date of Birth</label>
-                            <input type="date" name="dob_partner" id="dob_partner"
-                                   onchange="calcAge('dob_partner','age_partner')">
+                            <input type="date" name="dob_partner" id="dob_partner" onchange="calcAge('dob_partner','age_partner')" value="{{ client.dob_partner if client and client.dob_partner else '' }}">
                         </div>
                         <div class="form-group">
                             <label>Partner Age</label>
-                            <input type="number" name="age_partner" id="age_partner"
-                                   placeholder="Auto-calculated" readonly
-                                   style="background:#F5F5F5; color:#666;">
+                            <input type="number" name="age_partner" id="age_partner" placeholder="Auto-calculated" readonly style="background:#F5F5F5; color:#666;" value="{{ client.age_partner if client and client.age_partner else '' }}">
                         </div>
                         <div class="form-group">
                             <label>Partner SSN Last 4</label>
-                            <input type="text" name="ssn_last4_partner" maxlength="4" placeholder="5678">
+                            <input type="text" name="ssn_last4_partner" maxlength="4" placeholder="5678" value="{{ client.ssn_last4_partner if client and client.ssn_last4_partner else '' }}">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- FINANCIAL INFO -->
+
             <div class="form-section">
                 <h3>Financial Information</h3>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Monthly Inflow (After Tax) *</label>
-                        <input type="number" name="monthly_salary" step="0.01"
-                               required placeholder="15000">
+                        <input type="number" name="monthly_salary" step="0.01" required placeholder="15000" value="{{ client.monthly_salary if client else '' }}">
                     </div>
                     <div class="form-group">
                         <label>Monthly Expense Budget *</label>
-                        <input type="number" name="monthly_expenses" step="0.01"
-                               required placeholder="11000">
+                        <input type="number" name="monthly_expenses" step="0.01" required placeholder="11000" value="{{ client.monthly_expenses if client else '' }}">
                     </div>
                     <div class="form-group">
                         <label>Private Reserve Target</label>
-                        <input type="number" name="private_reserve_target"
-                               step="0.01" placeholder="66000">
+                        <input type="number" name="private_reserve_target" step="0.01" placeholder="66000" value="{{ client.private_reserve_target if client else '' }}">
                     </div>
                 </div>
             </div>
 
-            <!-- ACCOUNTS -->
+
             <div class="form-section">
                 <h3>Accounts</h3>
                 <p style="color:#666; font-size:13px; margin-bottom:16px;">
@@ -119,37 +106,59 @@
                 </p>
 
                 <div id="accounts-container">
-                    <div class="account-row">
-                        <select name="account_category[]" required onchange="updateOwnerOptions(this)">
-                            <option value="">Category</option>
-                            <option value="retirement">Retirement</option>
-                            <option value="non_retirement">Non-Retirement</option>
-                            <option value="trust">Trust</option>
-                            <option value="liability">Liability</option>
-                        </select>
-                        <select name="account_owner[]" required>
-                            <option value="client1">Client 1</option>
-                            <option value="client2">Client 2</option>
-                            <option value="joint">Joint</option>
-                        </select>
-                        <input type="text" name="account_type[]"
-                               placeholder="IRA, Roth IRA, Mortgage..." required>
-                        <input type="text" name="account_last4[]"
-                               placeholder="Last 4" maxlength="4">
-                        <button type="button" class="btn-remove"
-                                onclick="removeAccount(this)">✕</button>
-                    </div>
+                    {% if accounts and accounts|length > 0 %}
+                        {% for account in accounts %}
+                        <div class="account-row">
+                            <select name="account_category[]" required onchange="updateOwnerOptions(this)">
+                                <option value="">Category</option>
+                                <option value="retirement" {% if account.account_category == 'retirement' %}selected{% endif %}>Retirement</option>
+                                <option value="non_retirement" {% if account.account_category == 'non_retirement' %}selected{% endif %}>Non-Retirement</option>
+                                <option value="trust" {% if account.account_category == 'trust' %}selected{% endif %}>Trust</option>
+                                <option value="liability" {% if account.account_category == 'liability' %}selected{% endif %}>Liability</option>
+                            </select>
+                            <select name="account_owner[]" required>
+                                <option value="client1" {% if account.owner == 'client1' %}selected{% endif %}>Client 1</option>
+                                {% if client and client.has_partner %}
+                                <option value="client2" {% if account.owner == 'client2' %}selected{% endif %}>Client 2 (Partner)</option>
+                                <option value="joint" {% if account.owner == 'joint' %}selected{% endif %}>Joint</option>
+                                {% endif %}
+                            </select>
+                            <input type="text" name="account_type[]" placeholder="IRA, Roth IRA, Mortgage..." required value="{{ account.account_type }}">
+                            <input type="text" name="account_last4[]" placeholder="Last 4" maxlength="4" value="{{ account.last4 }}">
+                            <button type="button" class="btn-remove" onclick="removeAccount(this)">✕</button>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="account-row">
+                            <select name="account_category[]" required onchange="updateOwnerOptions(this)">
+                                <option value="">Category</option>
+                                <option value="retirement">Retirement</option>
+                                <option value="non_retirement">Non-Retirement</option>
+                                <option value="trust">Trust</option>
+                                <option value="liability">Liability</option>
+                            </select>
+                            <select name="account_owner[]" required>
+                                <option value="client1">Client 1</option>
+                                {% if client and client.has_partner %}
+                                <option value="client2">Client 2 (Partner)</option>
+                                <option value="joint">Joint</option>
+                                {% endif %}
+                            </select>
+                            <input type="text" name="account_type[]" placeholder="IRA, Roth IRA, Mortgage..." required>
+                            <input type="text" name="account_last4[]" placeholder="Last 4" maxlength="4">
+                            <button type="button" class="btn-remove" onclick="removeAccount(this)">✕</button>
+                        </div>
+                    {% endif %}
                 </div>
 
-                <button type="button" class="btn btn-secondary"
-                        onclick="addAccount()" style="margin-top:12px;">
+                <button type="button" class="btn btn-secondary" onclick="addAccount()" style="margin-top:12px;">
                     + Add Account
                 </button>
             </div>
 
             <div style="margin-top:32px; display:flex; gap:16px;">
                 <button type="submit" class="btn btn-primary">Save Client</button>
-                <a href="/" class="btn btn-secondary">Cancel</a>
+                <a href="{% if client %}/client/{{ client.id }}{% else %}/{% endif %}" class="btn btn-secondary">Cancel</a>
             </div>
 
         </form>
@@ -159,8 +168,6 @@
         function togglePartner(checkbox) {
             const fields = document.getElementById('partner-fields');
             fields.style.display = checkbox.checked ? 'block' : 'none';
-
-            // Update owner dropdowns
             updateAllOwnerDropdowns();
         }
 
@@ -174,17 +181,18 @@
             const current = sel.value;
             sel.innerHTML = '';
 
-            const opt1 = new Option('Client 1', 'client1');
-            sel.add(opt1);
-
+            sel.add(new Option('Client 1', 'client1'));
             if (hasPartner) {
-                const opt2 = new Option('Client 2 (Partner)', 'client2');
-                sel.add(opt2);
-                const optJ = new Option('Joint', 'joint');
-                sel.add(optJ);
+                sel.add(new Option('Client 2 (Partner)', 'client2'));
+                sel.add(new Option('Joint', 'joint'));
             }
 
-            if (current) sel.value = current;
+            // Evitar que un valor inválido se quede seleccionado al quitar el partner
+            if (current === 'client2' || current === 'joint') {
+                sel.value = hasPartner ? current : 'client1';
+            } else {
+                if (current) sel.value = current;
+            }
         }
 
         function addAccount() {
@@ -201,8 +209,7 @@
             }
 
             row.innerHTML = `
-                <select name="account_category[]" required
-                        onchange="updateOwnerOptions(this)">
+                <select name="account_category[]" required onchange="updateOwnerOptions(this)">
                     <option value="">Category</option>
                     <option value="retirement">Retirement</option>
                     <option value="non_retirement">Non-Retirement</option>
@@ -212,12 +219,9 @@
                 <select name="account_owner[]" required>
                     ${ownerOptions}
                 </select>
-                <input type="text" name="account_type[]"
-                       placeholder="IRA, Roth IRA, Mortgage..." required>
-                <input type="text" name="account_last4[]"
-                       placeholder="Last 4" maxlength="4">
-                <button type="button" class="btn-remove"
-                        onclick="removeAccount(this)">✕</button>
+                <input type="text" name="account_type[]" placeholder="IRA, Roth IRA, Mortgage..." required>
+                <input type="text" name="account_last4[]" placeholder="Last 4" maxlength="4">
+                <button type="button" class="btn-remove" onclick="removeAccount(this)">✕</button>
             `;
             container.appendChild(row);
         }
@@ -228,8 +232,7 @@
         }
 
         function updateOwnerOptions(categorySelect) {
-            const ownerSelect = categorySelect.parentElement
-                                              .querySelector('select[name="account_owner[]"]');
+            const ownerSelect = categorySelect.parentElement.querySelector('select[name="account_owner[]"]');
             refreshOwnerOptions(ownerSelect);
         }
         
@@ -241,7 +244,7 @@
             const m = today.getMonth() - dob.getMonth();
             if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
             document.getElementById(ageId).value = age;
-}
+        }
     </script>
 </body>
 </html>
