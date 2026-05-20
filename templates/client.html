@@ -187,7 +187,7 @@
                 sel.add(new Option('Joint', 'joint'));
             }
 
-            // Evitar que un valor inválido se quede seleccionado al quitar el partner
+            // Prevent an invalid value from remaining selected when removing the partner
             if (current === 'client2' || current === 'joint') {
                 sel.value = hasPartner ? current : 'client1';
             } else {

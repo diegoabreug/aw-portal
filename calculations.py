@@ -1,5 +1,6 @@
 def calculate_sacs(inflow, outflow):
     """Calculate SACS (Simple Automated Cash Flow) values"""
+    # The excess is the core metric for the SACS long-term growth projection
     excess = inflow - outflow
     return {
         'inflow': inflow,
@@ -9,6 +10,7 @@ def calculate_sacs(inflow, outflow):
 
 def calculate_private_reserve_target(monthly_expenses, insurance_deductibles=0):
     """Private Reserve Target = (6 x monthly expenses) + insurance deductibles"""
+    # Industry standard: 6 months of expenses + any known insurance deductibles
     target = (6 * monthly_expenses) + insurance_deductibles
     return target
 
@@ -28,17 +30,21 @@ def calculate_tcc(balances):
     trust = 0
     liabilities = 0
 
+    # Initialize lists to categorize accounts for the UI rendering
     retirement_accounts = []
     non_retirement_accounts = []
     trust_accounts = []
     liability_accounts = []
 
+    # Iterate through all raw balances and categorize them based on type and ownership
     for b in balances:
         category = b['account_category']
         owner = b['owner']
+        # Fallback to 0 if balance is missing to prevent math errors
         balance = b['balance'] or 0
 
         if category == 'retirement':
+            # Retirement accounts must be strictly isolated by individual owner
             if owner == 'client1':
                 client1_retirement += balance
             else:
@@ -46,17 +52,21 @@ def calculate_tcc(balances):
             retirement_accounts.append(dict(b))
 
         elif category == 'non_retirement':
+            # Non-retirement groups both individual and joint accounts
             non_retirement += balance
             non_retirement_accounts.append(dict(b))
 
         elif category == 'trust':
+            # Trust assets (usually real estate) are kept separate from liquid non-retirement
             trust += balance
             trust_accounts.append(dict(b))
 
         elif category == 'liability':
+            # Liabilities are tracked but MUST NOT be subtracted from the net worth totals
             liabilities += balance
             liability_accounts.append(dict(b))
 
+    # Grand Total aggregates all positive assets (ignoring liabilities per PRD)
     grand_total = client1_retirement + client2_retirement + non_retirement + trust
 
     return {
@@ -74,6 +84,7 @@ def calculate_tcc(balances):
 
 def format_currency(amount):
     """Format number as currency string"""
+    # Handle None values gracefully to prevent UI crashes
     if amount is None:
         return '$0'
     return '${:,.0f}'.format(amount)

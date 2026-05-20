@@ -42,7 +42,6 @@ def arrow_right(c, x1, y, x2, color, w=2):
     c.drawPath(p, fill=1, stroke=0)
     c.restoreState()
 
-# NUEVA FUNCIÓN: Flecha apuntando a la izquierda
 def arrow_left(c, x1, y, x2, color, w=2):
     c.saveState()
     c.setStrokeColor(color); c.setFillColor(color); c.setLineWidth(w)
@@ -156,7 +155,7 @@ def generate_sacs_pdf(client, sacs_data, private_reserve_balance):
     fica_cx = CX - 160
     inv_cx = CX + 160
 
-    # FLECHA VERDE DE ENTRADA
+    # Green Entrance Arrow
     c.saveState()
     c.setStrokeColor(GREEN_MED); c.setFillColor(GREEN_MED); c.setLineWidth(3)
     c.line(inflow_cx - 60, y1 + 50, inflow_cx - 45, y1 + 35)
@@ -179,7 +178,7 @@ def generate_sacs_pdf(client, sacs_data, private_reserve_balance):
     amount_box(c, f"${sacs_data['outflow']:,.0f}", outflow_cx, y1 - 5, RED_DARK)
     ct(c, "$1,000 Floor", outflow_cx, y1 - 35, font="Helvetica", size=8, color=WHITE)
 
-    # FLECHA ROJA (Inflow -> Outflow)
+    # RED ARROW (Inflow -> Outflow)
     ax1 = inflow_cx + r + 5
     ax2 = outflow_cx - r - 5
     arrow_right(c, ax1, y1, ax2, RED_MED, 3)
@@ -190,7 +189,7 @@ def generate_sacs_pdf(client, sacs_data, private_reserve_balance):
     black_text = "Automated transfer on the 28th"
     c.drawString(CX - c.stringWidth(black_text, "Helvetica-Bold", 7)/2, y1 - 12, black_text)
 
-    # FLECHA AZUL DOBLADA (Inflow -> Reserve)
+    # Bent Blue Arrow (Inflow -> Reserve)
     bx1 = inflow_cx
     by1 = y1 - r - 5
     bx2 = reserve_cx - r - 5
@@ -205,11 +204,11 @@ def generate_sacs_pdf(client, sacs_data, private_reserve_balance):
     ct(c, "RESERVE", reserve_cx, y2 + 10, size=13, color=WHITE)
     amount_box(c, f"${sacs_data['excess']:,.0f}", reserve_cx, y2 - 15, BLUE_MED)
 
-    # LÍNEA PUNTEADA VERTICAL - ¡Corregida para llegar hasta las flechas!
+    # Vertical Dotted Line
     c.saveState()
     c.setStrokeColor(BLACK); c.setLineWidth(2.5); c.setDash(5, 5)
-    c.line(CX, 235, CX, 225) # Tramo superior
-    c.line(CX, 195, CX, 142) # Tramo inferior, baja hasta y=142
+    c.line(CX, 235, CX, 225) # Upper section
+    c.line(CX, 195, CX, 142) # Lower section: descends to y = 142.
     c.restoreState()
     
     c.setFont("Helvetica-Bold", 10); c.setFillColor(BLACK)
@@ -234,14 +233,14 @@ def generate_sacs_pdf(client, sacs_data, private_reserve_balance):
     amount_box(c, il, inv_cx, y3 - 15, BLUE_DARK)
     ct(c, "Remainder", inv_cx, y3 - r - 15, font="Helvetica-Bold", size=8, color=BLACK)
 
-    # FLECHAS SEPARADAS (FICA <-> Investment)
-    # 1. Flecha de FICA a Investment (Arriba, apuntando a la derecha)
+    # SEPARATE ARROWS (FICA <-> Investment)
+    # 1. Arrow from FICA to Investment (Up, pointing to the right)
     arrow_right(c, fica_cx + r + 15, y3 + 12, inv_cx - r - 15, BLUE_MED, 2.5)
     
-    # 2. Flecha de Investment a FICA (Abajo, apuntando a la izquierda usando nueva función)
+    # 2. Arrow from Investment to FICA (Down, pointing left using new function)
     arrow_left(c, inv_cx - r - 15, y3 - 12, fica_cx + r + 15, BLUE_MED, 2.5)
 
-    # TEXTO INFERIOR
+    # Bottom Text
     ct(c, "LONG TERM CASHFLOW", CX, 60, font="Helvetica-Bold", size=11, color=BLACK)
     ct(c, "(Magnifies Private Reserve Cashflow)", CX, 45, font="Helvetica-Bold", size=10, color=BLUE_MED)
 
