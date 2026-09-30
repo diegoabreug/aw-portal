@@ -4,6 +4,7 @@ from database import (init_db, get_all_clients, get_client, get_client_accounts,
 from calculations import calculate_sacs, calculate_tcc, calculate_private_reserve_target
 from pdf_generator import generate_sacs_pdf, generate_tcc_pdf
 import io
+import os
 import zipfile
 
 from datetime import datetime, date
@@ -272,4 +273,4 @@ def download_reports(client_id, report_id):
     )
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=os.environ.get("FLASK_DEBUG") == "1")
